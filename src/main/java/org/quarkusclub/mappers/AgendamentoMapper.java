@@ -8,9 +8,15 @@ import java.util.List;
 
 public class AgendamentoMapper {
     public static AgendamentoDto mapEntityToDto(AgendamentoEntity agendamento) {
+        if(agendamento == null) {
+            return null;
+        }
         return new AgendamentoDto(agendamento.getId(),  agendamento.getIdCliente(), agendamento.getNomeMedico(), agendamento.getHoraConsulta(), agendamento.getNomeConvenio());
     }
     public static AgendamentoEntity mapDtoToEntity(AgendamentoDto agendamento) {
+        if(agendamento == null) {
+            return null;
+        }
         return new AgendamentoEntity(agendamento.id(), agendamento.idCliente(), agendamento.nomeMedico(), agendamento.nomeConvenio(), agendamento.horaConsulta());
     }
     public static List<AgendamentoDto> mapEntityListToDtoList(List<AgendamentoEntity> agendamentos) {
