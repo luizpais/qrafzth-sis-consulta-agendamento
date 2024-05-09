@@ -5,10 +5,13 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Response;
+import org.quarkusclub.dtos.ClienteStatusResponse;
+import org.quarkusclub.dtos.MedicoStatusResponse;
 import org.quarkusclub.mappers.AgendamentoMapper;
 import org.quarkusclub.models.AgendamentoDto;
 import org.quarkusclub.models.exceptions.SisConsultaException;
 import org.quarkusclub.repositories.AgendamentoRepository;
+import org.quarkusclub.repositories.ConveniosRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,6 +23,9 @@ public class AgendamentoService {
 
     @Inject
     private AgendamentoRepository agendamentoRepository;
+
+    @Inject
+    private ConveniosRepository convenioRepository;
 
     //List<AgendamentoDto> agendamentos = new ArrayList<>();
     public List<AgendamentoDto> getAgendamentosMedico(String nomeMedico) {
@@ -34,6 +40,14 @@ public class AgendamentoService {
     public AgendamentoDto createAgendamento(AgendamentoDto agendamento) {
         if( agendamento.horaConsulta().isBefore(LocalDateTime.now()) ) {
             throw new IllegalArgumentException("A data da consulta não pode ser anterior a data atual");
+        }
+        ClienteStatusResponse conveniado = convenioRepository.getStatusConveniado(agendamento.idCliente(), agendamento.nomeConvenio());
+        if(conveniado == null || !conveniado.status()){
+            throw new RuntimeException("Conveniado não está ativo ou não existe no convenio.");
+        }
+        MedicoStatusResponse medico = convenioRepository.getStatusMedico(agendamento.nomeMedico(), agendamento.nomeConvenio());
+        if(medico == null || !medico.status()){
+            throw new RuntimeException("Médico não está ativo ou não existe no convenio.");
         }
         AgendamentoDto novoAgendamento = new AgendamentoDto(UUID.randomUUID(), UUID.randomUUID(), agendamento.nomeMedico(), agendamento.horaConsulta(), agendamento.nomeConvenio());
         agendamentoRepository.createAgendamento(AgendamentoMapper.mapDtoToEntity(novoAgendamento));

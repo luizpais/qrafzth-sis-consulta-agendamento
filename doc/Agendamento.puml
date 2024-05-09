@@ -1,0 +1,14 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+Agendamento -> AgendamentoService: createAgendamento(AgendamentoDto)
+AgendamentoService -> AgendamentoRepository: consultaStatusClienteNoPlano(AgendamentoEntity)
+AgendamentoService -> AgendamentoRepository: consultaStatusMedicoNoPlano(AgendamentoEntity)
+
+AgendamentoService -> AgendamentoRepository: createAgendamento(AgendamentoEntity)
+
+AgendamentoRepository -> AgendamentoEntity: save(AgendamentoEntity)
+
+@enduml
