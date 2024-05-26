@@ -2,6 +2,7 @@ package org.quarkusclub.repositories;
 
 
 import jakarta.enterprise.context.ApplicationScoped;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
 import org.jboss.logging.Logger;
 import org.quarkusclub.dtos.ClienteStatusResponse;
@@ -18,6 +19,12 @@ public class ConveniosRepository {
 
     private static final Logger log = Logger.getLogger(ConveniosRepository.class);
     private final Map<String, ConvenioService> convenios = new HashMap<>();
+
+    @ConfigProperty( name = "convenio.boa-vida.url")
+    private String boaVidaUrl;
+
+    @ConfigProperty( name = "convenio.vida-longa.url")
+    private String vidaLongaUrl;
 
     private ConveniosRepository() {
         convenios.put("boa vida", RestClientBuilder.newBuilder()
